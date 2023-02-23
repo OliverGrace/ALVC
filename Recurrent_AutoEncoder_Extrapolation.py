@@ -145,14 +145,14 @@ for g in range(GOP_num):
 
     # load I frame (compressed)
     frame_index = g * GOP_size + 1
-    F0_com = misc.imread(path_com + 'f' + str(frame_index).zfill(3) + '.png')
+    F0_com = misc.imread(path_com + 'output_' + str(frame_index).zfill(4) + '.png')
     F0_com = np.expand_dims(F0_com, axis=0)
 
     for f in range(args.f_P):
 
         # load P frame (raw)
         frame_index = g * GOP_size + f + 2
-        F1_raw = misc.imread(path + 'f' + str(frame_index).zfill(3) + '.png')
+        F1_raw = misc.imread(path + 'output_' + str(frame_index).zfill(4) + '.png')
         F1_raw = np.expand_dims(F1_raw, axis=0)
 
         # init hidden states
@@ -170,9 +170,9 @@ for g in range(GOP_num):
             # python_cpu = ''
             os.system(
                 'python Extrapolation.py --path ' + path_com + ' --idx ' + str(frame_index) + ' --l ' + str(args.l))
-            F_ref = misc.imread(path_com + 'f' + str(frame_index).zfill(3) + '_extra.png').astype(float)
+            F_ref = misc.imread(path_com + 'output_' + str(frame_index).zfill(4) + '_extra.png').astype(float)
             F_ref = np.expand_dims(F_ref, axis=0)
-            # F_ref = np.load(path_com + 'f' + str(frame_index).zfill(3) + '_extra.npy') * 255.0
+            # F_ref = np.load(path_com + 'output_' + str(frame_index).zfill(4) + '_extra.npy') * 255.0
             mse = np.mean(np.power(np.subtract(F_ref / 255.0, F1_raw / 255.0), 2.0))
             quality = 10 * np.log10(1.0 / mse)
 
@@ -191,16 +191,16 @@ for g in range(GOP_num):
         # flow_color = flow_vis.flow_to_color(motion_map[0], convert_to_bgr=False)
         # save bottleneck bitstream
         if not flag:
-            with open(path_bin + '/f' + str(frame_index).zfill(3) + '.bin', "wb") as ff:
+            with open(path_bin + '/output_' + str(frame_index).zfill(4) + '.bin', "wb") as ff:
                 ff.write(np.array(len(string_MV), dtype=np.uint16).tobytes())
                 ff.write(string_MV)
                 ff.write(string_Res)
 
         # save compressed frame and latents
-        misc.imsave(path_com + '/f' + str(frame_index).zfill(3) + '.png', np.uint8(np.round(F0_com[0])))
-        # misc.imsave(path_com + '/f' + str(frame_index).zfill(3) + '_flow.png', flow_color)
-        np.save(path_lat + '/f' + str(frame_index).zfill(3) + '_mv.npy', latent_mv)
-        np.save(path_lat + '/f' + str(frame_index).zfill(3) + '_res.npy', latent_res)
+        misc.imsave(path_com + '/output_' + str(frame_index).zfill(4) + '.png', np.uint8(np.round(F0_com[0])))
+        # misc.imsave(path_com + '/output_' + str(frame_index).zfill(4) + '_flow.png', flow_color)
+        np.save(path_lat + '/output_' + str(frame_index).zfill(4) + '_mv.npy', latent_mv)
+        np.save(path_lat + '/output_' + str(frame_index).zfill(4) + '_res.npy', latent_res)
 
         quality_frame[frame_index - 1] = quality
 
@@ -216,14 +216,14 @@ for g in range(GOP_num):
     # backward P frames
 
     # load I frame (compressed)
-    F0_com = misc.imread(path_com + 'f' + str(frame_index).zfill(3) + '.png')
+    F0_com = misc.imread(path_com + 'output_' + str(frame_index).zfill(4) + '.png')
     F0_com = np.expand_dims(F0_com, axis=0)
 
     for f in range(args.b_P):
 
         # load P frame (raw)
         frame_index = (g + 1) * GOP_size - f
-        F1_raw = misc.imread(path + 'f' + str(frame_index).zfill(3) + '.png')
+        F1_raw = misc.imread(path + 'output_' + str(frame_index).zfill(4) + '.png')
         F1_raw = np.expand_dims(F1_raw, axis=0)
 
         # init hidden states
@@ -241,7 +241,7 @@ for g in range(GOP_num):
             # python_cpu = ''
             os.system(
                 'python Extrapolation.py --dirc bw --path ' + path_com + ' --idx ' + str(frame_index) + ' --l ' + str(args.l))
-            F_ref = misc.imread(path_com + 'f' + str(frame_index).zfill(3) + '_extra.png').astype(float)
+            F_ref = misc.imread(path_com + 'output_' + str(frame_index).zfill(4) + '_extra.png').astype(float)
             F_ref = np.expand_dims(F_ref, axis=0)
 
             mse = np.mean(np.power(np.subtract(F_ref / 255.0, F1_raw / 255.0), 2.0))
@@ -264,16 +264,16 @@ for g in range(GOP_num):
 
         # save bottleneck bitstream
         if not flag:
-            with open(path_bin + '/f' + str(frame_index).zfill(3) + '.bin', "wb") as ff:
+            with open(path_bin + '/output_' + str(frame_index).zfill(4) + '.bin', "wb") as ff:
                 ff.write(np.array(len(string_MV), dtype=np.uint16).tobytes())
                 ff.write(string_MV)
                 ff.write(string_Res)
 
         # save compressed frame and latents
-        misc.imsave(path_com + '/f' + str(frame_index).zfill(3) + '.png', np.uint8(np.round(F0_com[0])))
-        # misc.imsave(path_com + '/f' + str(frame_index).zfill(3) + '_flow.png', flow_color)
-        np.save(path_lat + '/f' + str(frame_index).zfill(3) + '_mv.npy', latent_mv)
-        np.save(path_lat + '/f' + str(frame_index).zfill(3) + '_res.npy', latent_res)
+        misc.imsave(path_com + '/output_' + str(frame_index).zfill(4) + '.png', np.uint8(np.round(F0_com[0])))
+        # misc.imsave(path_com + '/output_' + str(frame_index).zfill(4) + '_flow.png', flow_color)
+        np.save(path_lat + '/output_' + str(frame_index).zfill(4) + '_mv.npy', latent_mv)
+        np.save(path_lat + '/output_' + str(frame_index).zfill(4) + '_res.npy', latent_res)
 
         quality_frame[frame_index - 1] = quality
 
@@ -286,14 +286,14 @@ rest_frame_num = args.frame - 1 - GOP_size * GOP_num
 
 # load I frame (compressed)
 frame_index = GOP_num * GOP_size + 1
-F0_com = misc.imread(path_com + 'f' + str(frame_index).zfill(3) + '.png')
+F0_com = misc.imread(path_com + 'output_' + str(frame_index).zfill(4) + '.png')
 F0_com = np.expand_dims(F0_com, axis=0)
 
 for f in range(rest_frame_num):
 
     # load P frame (raw)
     frame_index = GOP_num * GOP_size + f + 2
-    F1_raw = misc.imread(path + 'f' + str(frame_index).zfill(3) + '.png')
+    F1_raw = misc.imread(path + 'output_' + str(frame_index).zfill(4) + '.png')
     F1_raw = np.expand_dims(F1_raw, axis=0)
 
     # init hidden states
@@ -314,7 +314,7 @@ for f in range(rest_frame_num):
         # python_cpu = ''
         os.system('python Extrapolation.py --path ' + path_com + ' --idx ' + str(frame_index) + ' --l ' + str(args.l))
 
-        F_ref = misc.imread(path_com + 'f' + str(frame_index).zfill(3) + '_extra.png').astype(float)
+        F_ref = misc.imread(path_com + 'output_' + str(frame_index).zfill(4) + '_extra.png').astype(float)
         F_ref = np.expand_dims(F_ref, axis=0)
 
         mse = np.mean(np.power(np.subtract(F_ref / 255.0, F1_raw / 255.0), 2.0))
@@ -335,15 +335,15 @@ for f in range(rest_frame_num):
     F0_com = F0_com * 255
     # save bottleneck bitstream
     if not flag:
-        with open(path_bin + '/f' + str(frame_index).zfill(3) + '.bin', "wb") as ff:
+        with open(path_bin + '/output_' + str(frame_index).zfill(4) + '.bin', "wb") as ff:
             ff.write(np.array(len(string_MV), dtype=np.uint16).tobytes())
             ff.write(string_MV)
             ff.write(string_Res)
 
     # save compressed frame and latents
-    misc.imsave(path_com + '/f' + str(frame_index).zfill(3) + '.png', np.uint8(np.round(F0_com[0])))
-    np.save(path_lat + '/f' + str(frame_index).zfill(3) + '_mv.npy', latent_mv)
-    np.save(path_lat + '/f' + str(frame_index).zfill(3) + '_res.npy', latent_res)
+    misc.imsave(path_com + '/output_' + str(frame_index).zfill(4) + '.png', np.uint8(np.round(F0_com[0])))
+    np.save(path_lat + '/output_' + str(frame_index).zfill(4) + '_mv.npy', latent_mv)
+    np.save(path_lat + '/output_' + str(frame_index).zfill(4) + '_res.npy', latent_res)
 
     quality_frame[frame_index - 1] = quality
 

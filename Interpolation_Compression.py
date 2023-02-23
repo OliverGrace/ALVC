@@ -123,12 +123,12 @@ saver.restore(sess, save_path=model_path + 'model.ckpt-200000')
 # encode GOPs
 for g in range(GOP_num):
 
-    F_left = misc.imread(path_com + 'f' + str(g * GOP_size + args.f_P).zfill(3) + '.png').astype(float)
-    F_0 = misc.imread(path_com + 'f' + str(g * GOP_size + args.f_P + 1).zfill(3) + '.png').astype(float)
-    F_1 = misc.imread(path_com + 'f' + str(g * GOP_size + args.f_P + args.inter + 2).zfill(3) + '.png').astype(float)
-    F_right = misc.imread(path_com + 'f' + str(g * GOP_size + args.f_P + args.inter + 3).zfill(3) + '.png').astype(float)
+    F_left = misc.imread(path_com + 'output_' + str(g * GOP_size + args.f_P).zfill(4) + '.png').astype(float)
+    F_0 = misc.imread(path_com + 'output_' + str(g * GOP_size + args.f_P + 1).zfill(4) + '.png').astype(float)
+    F_1 = misc.imread(path_com + 'output_' + str(g * GOP_size + args.f_P + args.inter + 2).zfill(4) + '.png').astype(float)
+    F_right = misc.imread(path_com + 'output_' + str(g * GOP_size + args.f_P + args.inter + 3).zfill(4) + '.png').astype(float)
 
-    G_t = misc.imread(path_raw + 'f' + str(g * GOP_size + args.f_P + 2).zfill(3) + '.png').astype(float)
+    G_t = misc.imread(path_raw + 'output_' + str(g * GOP_size + args.f_P + 2).zfill(4) + '.png').astype(float)
 
     input_data = np.stack([F_left, F_0, G_t, F_1, F_right], axis=0)
     input_data = np.expand_dims(input_data/255.0, axis=0)
@@ -137,7 +137,7 @@ for g in range(GOP_num):
         = sess.run([psnr_loss, bpp_loss, frame_t_com, flow_lat, res_lat],
                    feed_dict={data_tensor:input_data, inter_num:args.inter})
 
-    # with open(path_bin + '/f' + str(g * GOP_size + args.f_P + 2).zfill(3) + '.bin', "wb") as ff:
+    # with open(path_bin + '/output_' + str(g * GOP_size + args.f_P + 2).zfill(4) + '.bin', "wb") as ff:
     #     ff.write(np.array(len(string_MV), dtype=np.uint16).tobytes())
     #     ff.write(string_MV)
     #     ff.write(string_Res)
@@ -150,9 +150,9 @@ for g in range(GOP_num):
 
     print('Frame', g * GOP_size + args.f_P + 2, args.metric + ' =', psnr)
 
-    misc.imsave(path_com + 'f' + str(g * GOP_size + args.f_P + 2).zfill(3) + '.png', F_t[0])
-    np.save(path_lat + 'f' + str(g * GOP_size + args.f_P + 2).zfill(3) + '_mv.npy', mv_latent)
-    np.save(path_lat + 'f' + str(g * GOP_size + args.f_P + 2).zfill(3) + '_res.npy', res_latent)
+    misc.imsave(path_com + 'output_' + str(g * GOP_size + args.f_P + 2).zfill(4) + '.png', F_t[0])
+    np.save(path_lat + 'output_' + str(g * GOP_size + args.f_P + 2).zfill(4) + '_mv.npy', mv_latent)
+    np.save(path_lat + 'output_' + str(g * GOP_size + args.f_P + 2).zfill(4) + '_res.npy', res_latent)
 
 sess.run(tf.global_variables_initializer())
 all_var = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
@@ -164,12 +164,12 @@ saver.restore(sess, save_path=model_path + 'model.ckpt-200000')
 for g in range(GOP_num):
 
     # print(GOP_size, g * GOP_size + args.f_P + args.inter + 3)
-    F_left = misc.imread(path_com + 'f' + str(g * GOP_size + args.f_P + 1).zfill(3) + '.png').astype(float)
-    F_0 = misc.imread(path_com + 'f' + str(g * GOP_size + args.f_P + 2).zfill(3) + '.png').astype(float)
-    F_1 = misc.imread(path_com + 'f' + str(g * GOP_size + args.f_P + args.inter + 2).zfill(3) + '.png').astype(float)
-    F_right = misc.imread(path_com + 'f' + str(g * GOP_size + args.f_P + args.inter + 3).zfill(3) + '.png').astype(float)
+    F_left = misc.imread(path_com + 'output_' + str(g * GOP_size + args.f_P + 1).zfill(4) + '.png').astype(float)
+    F_0 = misc.imread(path_com + 'output_' + str(g * GOP_size + args.f_P + 2).zfill(4) + '.png').astype(float)
+    F_1 = misc.imread(path_com + 'output_' + str(g * GOP_size + args.f_P + args.inter + 2).zfill(4) + '.png').astype(float)
+    F_right = misc.imread(path_com + 'output_' + str(g * GOP_size + args.f_P + args.inter + 3).zfill(4) + '.png').astype(float)
 
-    G_t = misc.imread(path_raw + 'f' + str(g * GOP_size + args.f_P + args.inter + 1).zfill(3) + '.png').astype(float)
+    G_t = misc.imread(path_raw + 'output_' + str(g * GOP_size + args.f_P + args.inter + 1).zfill(4) + '.png').astype(float)
 
     input_data = np.stack([F_left, F_0, G_t, F_1, F_right], axis=0)
     input_data = np.expand_dims(input_data / 255.0, axis=0)
@@ -178,7 +178,7 @@ for g in range(GOP_num):
         = sess.run([psnr_loss, bpp_loss, frame_t_com, flow_lat, res_lat],
                    feed_dict={data_tensor: input_data, inter_num:args.inter - 1})
 
-    # with open(path_bin + '/f' + str(g * GOP_size + args.f_P + 1).zfill(3) + '.bin', "wb") as ff:
+    # with open(path_bin + '/output_' + str(g * GOP_size + args.f_P + 1).zfill(4) + '.bin', "wb") as ff:
     #     ff.write(np.array(len(string_MV), dtype=np.uint16).tobytes())
     #     ff.write(string_MV)
     #     ff.write(string_Res)
@@ -191,9 +191,9 @@ for g in range(GOP_num):
 
     print('Frame', g * GOP_size + args.f_P + args.inter + 1, args.metric + ' =', psnr)
 
-    misc.imsave(path_com + 'f' + str(g * GOP_size + args.f_P + args.inter + 1).zfill(3) + '.png', F_t[0])
-    np.save(path_lat + 'f' + str(g * GOP_size + args.f_P + args.inter + 1).zfill(3) + '_mv.npy', mv_latent)
-    np.save(path_lat + 'f' + str(g * GOP_size + args.f_P + args.inter + 1).zfill(3) + '_res.npy', res_latent)
+    misc.imsave(path_com + 'output_' + str(g * GOP_size + args.f_P + args.inter + 1).zfill(4) + '.png', F_t[0])
+    np.save(path_lat + 'output_' + str(g * GOP_size + args.f_P + args.inter + 1).zfill(4) + '_mv.npy', mv_latent)
+    np.save(path_lat + 'output_' + str(g * GOP_size + args.f_P + args.inter + 1).zfill(4) + '_res.npy', res_latent)
 
 print('Average: ' + args.path, np.average(psnr_value), np.average(bpp_value))
 

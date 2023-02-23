@@ -58,23 +58,23 @@ for g in range(GOP_num + 1):
 
     if I_index <= args.frame:
 
-        if os.path.exists(path_bin + 'f' + str(I_index).zfill(3) + '.bin'):
-            total_bits += os.path.getsize(path_bin + 'f' + str(I_index).zfill(3) + '.bin') * 8
-            bpp[I_index - 1] = os.path.getsize(path_bin + 'f' + str(I_index).zfill(3) + '.bin') * 8 /Height/Width
+        if os.path.exists(path_bin + 'output_' + str(I_index).zfill(4) + '.bin'):
+            total_bits += os.path.getsize(path_bin + 'output_' + str(I_index).zfill(4) + '.bin') * 8
+            bpp[I_index - 1] = os.path.getsize(path_bin + 'output_' + str(I_index).zfill(4) + '.bin') * 8 /Height/Width
         else:
-            bpp_I = np.load(path_bin + 'f' + str(I_index).zfill(3) + '.npy')
+            bpp_I = np.load(path_bin + 'output_' + str(I_index).zfill(4) + '.npy')
             total_bits += bpp_I * Height * Width
             bpp[I_index - 1] = bpp_I
 
         # if there exists forward P frame(s), I_index + 1 is encoded by the bottleneck
         if args.f_P > 0 and I_index + 1 <= args.frame:
-            total_bits += os.path.getsize(path_bin + 'f' + str(I_index + 1).zfill(3) + '.bin') * 8
-            bpp[I_index] = os.path.getsize(path_bin + 'f' + str(I_index + 1).zfill(3) + '.bin') * 8 / Height / Width
+            total_bits += os.path.getsize(path_bin + 'output_' + str(I_index + 1).zfill(4) + '.bin') * 8
+            bpp[I_index] = os.path.getsize(path_bin + 'output_' + str(I_index + 1).zfill(4) + '.bin') * 8 / Height / Width
 
         # if there exists backward P frame(s), I_index - 1 is encoded by the bottleneck
         if args.b_P > 0 and I_index - 1 >= 1:
-            total_bits += os.path.getsize(path_bin + 'f' + str(I_index - 1).zfill(3) + '.bin') * 8
-            bpp[I_index - 2] = os.path.getsize(path_bin + 'f' + str(I_index - 1).zfill(3) + '.bin') * 8 / Height / Width
+            total_bits += os.path.getsize(path_bin + 'output_' + str(I_index - 1).zfill(4) + '.bin') * 8
+            bpp[I_index - 2] = os.path.getsize(path_bin + 'output_' + str(I_index - 1).zfill(4) + '.bin') * 8 / Height / Width
 
 # start RPM
 
@@ -94,7 +94,7 @@ for lat in latents:
         if args.f_P >= 2:
             # load first prior
             frame_index = g * GOP_size + 2
-            prior_value = np.load(path_lat + '/f' + str(frame_index).zfill(3) + '_' + lat + '.npy')
+            prior_value = np.load(path_lat + '/output_' + str(frame_index).zfill(4) + '_' + lat + '.npy')
 
             # init state
             h_state = np.zeros([2, batch_size, Height // 16, Width // 16, args.N], dtype=np.float)
@@ -103,7 +103,7 @@ for lat in latents:
 
                 # load latent
                 frame_index = g * GOP_size + f + 3
-                latent_value = np.load(path_lat + '/f' + str(frame_index).zfill(3) + '_' + lat + '.npy')
+                latent_value = np.load(path_lat + '/output_' + str(frame_index).zfill(4) + '_' + lat + '.npy')
 
                 # run RPM
                 bits_estimation, sigma_value, mu_value, h_state \
@@ -127,7 +127,7 @@ for lat in latents:
         if args.b_P >= 2:
             # load first prior
             frame_index = (g + 1) * GOP_size
-            prior_value = np.load(path_lat + '/f' + str(frame_index).zfill(3) + '_' + lat + '.npy')
+            prior_value = np.load(path_lat + '/output_' + str(frame_index).zfill(4) + '_' + lat + '.npy')
 
             # init state
             h_state = np.zeros([2, batch_size, Height // 16, Width // 16, args.N], dtype=np.float)
@@ -136,7 +136,7 @@ for lat in latents:
 
                 # load latent
                 frame_index = (g + 1) * GOP_size - f - 1
-                latent_value = np.load(path_lat + '/f' + str(frame_index).zfill(3) + '_' + lat + '.npy')
+                latent_value = np.load(path_lat + '/output_' + str(frame_index).zfill(4) + '_' + lat + '.npy')
 
                 # run RPM
                 bits_estimation, sigma_value, mu_value, h_state \
@@ -162,7 +162,7 @@ for lat in latents:
     if rest_frame_num >= 2:
         # load first prior
         frame_index = GOP_num * GOP_size + 2
-        prior_value = np.load(path_lat + '/f' + str(frame_index).zfill(3) + '_' + lat + '.npy')
+        prior_value = np.load(path_lat + '/output_' + str(frame_index).zfill(4) + '_' + lat + '.npy')
 
         # init state
         h_state = np.zeros([2, batch_size, Height // 16, Width // 16, args.N], dtype=np.float)
@@ -171,7 +171,7 @@ for lat in latents:
 
             # load latent
             frame_index = GOP_num * GOP_size + f + 3
-            latent_value = np.load(path_lat + '/f' + str(frame_index).zfill(3) + '_' + lat + '.npy')
+            latent_value = np.load(path_lat + '/output_' + str(frame_index).zfill(4) + '_' + lat + '.npy')
 
             # run RPM
             bits_estimation, sigma_value, mu_value, h_state \

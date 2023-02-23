@@ -1,9 +1,11 @@
 import os
 import argparse
+import warnings
+warnings.filterwarnings("ignore")
 
 parser = argparse.ArgumentParser(
       formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("--path", default='BasketballPass')
+parser.add_argument("--path", default='out')
 parser.add_argument("--l", type=int, default=512, choices=[256, 512, 1024, 2048])
 args = parser.parse_args()
 

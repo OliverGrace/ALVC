@@ -40,7 +40,7 @@ def configure(args, path_root, path_raw):
     os.makedirs(path_bin, exist_ok=True)
     os.makedirs(path_lat, exist_ok=True)
 
-    F1 = misc.imread(path_raw + 'f001.png')
+    F1 = misc.imread(path_raw + 'output_0001.png')
     Height = np.size(F1, 0)
     Width = np.size(F1, 1)
     batch_size = 1
@@ -80,7 +80,7 @@ def configure_gan(args):
     os.makedirs(path_bin, exist_ok=True)
     os.makedirs(path_lat, exist_ok=True)
 
-    F1 = misc.imread('/srv/beegfs-benderdata/scratch/reyang_data/data/RLVC/' + path + '/f001.png')
+    F1 = misc.imread('/srv/beegfs-benderdata/scratch/reyang_data/data/RLVC/' + path + '/output_0001.png')
     Height = np.size(F1, 0)
     Width = np.size(F1, 1)
     batch_size = 1
@@ -123,51 +123,51 @@ def encode_I(args, frame_index, I_level, path, path_com, path_bin):
 
         if args.VTM == 1:
 
-            F1 = misc.imread(path + '/f001.png')
+            F1 = misc.imread(path + '/output_0001.png')
             Height = np.size(F1, 0)
             Width = np.size(F1, 1)
 
             # path_yuv = './RLVC_VTM/' + args.path + '_' + args.mode + '_' + str(args.l) + '/frames/'
             #
-            # if not os.path.exists(path_com + 'f' + str(frame_index).zfill(3) + '.yuv'):
+            # if not os.path.exists(path_com + 'output_' + str(frame_index).zfill(4) + '.yuv'):
             #
-            os.system('ffmpeg -i ' + path + 'f' + str(frame_index).zfill(3) + '.png '
-                      '-pix_fmt yuv444p ' + path + 'f' + str(frame_index).zfill(3) + '.yuv -y -loglevel error')
+            os.system('ffmpeg -i ' + path + 'output_' + str(frame_index).zfill(4) + '.png '
+                      '-pix_fmt yuv444p ' + path + 'output_' + str(frame_index).zfill(4) + '.yuv -y -loglevel error')
             os.system(
                 '/scratch_net/maja_second/VVCSoftware_VTM/bin/EncoderAppStatic -c /scratch_net/maja_second/VVCSoftware_VTM/encoder_intra_vtm.cfg '
-                '-i ' + path + 'f' + str(frame_index).zfill(3) + '.yuv -b ' + path_bin + 'f' + str(frame_index).zfill(3) + '.bin '
-                '-o ' + path_com + 'f' + str(frame_index).zfill(3) +  '.yuv -f 1 -fr 2 -wdt ' + str(Width) + ' -hgt ' + str(Height) +
+                '-i ' + path + 'output_' + str(frame_index).zfill(4) + '.yuv -b ' + path_bin + 'output_' + str(frame_index).zfill(4) + '.bin '
+                '-o ' + path_com + 'output_' + str(frame_index).zfill(4) +  '.yuv -f 1 -fr 2 -wdt ' + str(Width) + ' -hgt ' + str(Height) +
                 ' -q ' + str(I_level) + ' --InputBitDepth=8 --OutputBitDepth=8 --OutputBitDepthC=8 --InputChromaFormat=444 > /dev/null')
 
-            # os.system('cp ' + './RLVC_VTM_extra_7/' + args.path + '_' + args.mode + '_' + str(args.l) + '/bitstreams/' + 'f' + str(frame_index).zfill(3) + '.bin ' +
-            #             path_bin + 'f' + str(frame_index).zfill(3) + '.bin')
-            # os.system('cp ' + './RLVC_VTM_extra_7/' + args.path + '_' + args.mode + '_' + str(args.l) + '/frames/' + 'f' + str(frame_index).zfill(3) + '.png ' +
-            #             path_com + 'f' + str(frame_index).zfill(3) + '.png')
+            # os.system('cp ' + './RLVC_VTM_extra_7/' + args.path + '_' + args.mode + '_' + str(args.l) + '/bitstreams/' + 'output_' + str(frame_index).zfill(4) + '.bin ' +
+            #             path_bin + 'output_' + str(frame_index).zfill(4) + '.bin')
+            # os.system('cp ' + './RLVC_VTM_extra_7/' + args.path + '_' + args.mode + '_' + str(args.l) + '/frames/' + 'output_' + str(frame_index).zfill(4) + '.png ' +
+            #             path_com + 'output_' + str(frame_index).zfill(4) + '.png')
             os.system(
                 'ffmpeg -f rawvideo -pix_fmt yuv444p -s ' + str(Width) + 'x' + str(Height) +
-                ' -i ' + path_com + 'f' + str(frame_index).zfill(3) + '.yuv '
-                + path_com + 'f' + str(frame_index).zfill(3) + '.png -y -loglevel error')
+                ' -i ' + path_com + 'output_' + str(frame_index).zfill(4) + '.yuv '
+                + path_com + 'output_' + str(frame_index).zfill(4) + '.png -y -loglevel error')
 
         else:
-            os.system('bpgenc -f 444 -m 9 ' + path + 'f' + str(frame_index).zfill(3) + '.png '
-                      '-o ' + path_bin + 'f' + str(frame_index).zfill(3) + '.bin -q ' + str(I_level))
-            os.system('bpgdec ' + path_bin + 'f' + str(frame_index).zfill(3) + '.bin '
-                  '-o ' + path_com + 'f' + str(frame_index).zfill(3) + '.png')
+            os.system('bpgenc -f 444 -m 9 ' + path + 'output_' + str(frame_index).zfill(4) + '.png '
+                      '-o ' + path_bin + 'output_' + str(frame_index).zfill(4) + '.bin -q ' + str(I_level))
+            os.system('bpgdec ' + path_bin + 'output_' + str(frame_index).zfill(4) + '.bin '
+                  '-o ' + path_com + 'output_' + str(frame_index).zfill(4) + '.png')
 
     elif args.mode == 'MS-SSIM':
         os.system(args.python_path + ' ' + args.CA_model_path + '/encode.py --model_type 1 '
-                  '--input_path ' + path + 'f' + str(frame_index).zfill(3) + '.png' +
-                  ' --compressed_file_path ' + path_bin + 'f' + str(frame_index).zfill(3) + '.bin'
+                  '--input_path ' + path + 'output_' + str(frame_index).zfill(4) + '.png' +
+                  ' --compressed_file_path ' + path_bin + 'output_' + str(frame_index).zfill(4) + '.bin'
                   + ' --quality_level ' + str(I_level))
         os.system(args.python_path + ' ' + args.CA_model_path + '/decode.py --compressed_file_path '
-                  + path_bin + 'f' + str(frame_index).zfill(3) + '.bin'
-                  + ' --recon_path ' + path_com + 'f' + str(frame_index).zfill(3) + '.png')
+                  + path_bin + 'output_' + str(frame_index).zfill(4) + '.bin'
+                  + ' --recon_path ' + path_com + 'output_' + str(frame_index).zfill(4) + '.png')
 
-    # bits = os.path.getsize(path_bin + str(frame_index).zfill(3) + '.bin')
+    # bits = os.path.getsize(path_bin + str(frame_index).zfill(4) + '.bin')
     # bits = bits * 8
 
-    F0_com = misc.imread(path_com + 'f' + str(frame_index).zfill(3) + '.png')
-    F0_raw = misc.imread(path + 'f' + str(frame_index).zfill(3) + '.png')
+    F0_com = misc.imread(path_com + 'output_' + str(frame_index).zfill(4) + '.png')
+    F0_raw = misc.imread(path + 'output_' + str(frame_index).zfill(4) + '.png')
 
     F0_com = np.expand_dims(F0_com, axis=0)
     F0_raw = np.expand_dims(F0_raw, axis=0)
@@ -193,11 +193,11 @@ def hific_I(args, frame_index, I_level, path, path_com, path_bin):
     # if I_level == 'hhi':
     #     I_level = 'hi'
 
-    os.system('cp ' + path_hific + path + '_' + str(I_level) + '/f' + str(frame_index).zfill(3) + '.tfci ' + path_bin)
-    os.system('cp ' + path_hific + path + '_' + str(I_level) + '/f' + str(frame_index).zfill(3) + '.png ' + path_com)
+    os.system('cp ' + path_hific + path + '_' + str(I_level) + '/output_' + str(frame_index).zfill(4) + '.tfci ' + path_bin)
+    os.system('cp ' + path_hific + path + '_' + str(I_level) + '/output_' + str(frame_index).zfill(4) + '.png ' + path_com)
 
-    F0_com = misc.imread(path_com + 'f' + str(frame_index).zfill(3) + '.png')
-    F0_raw = misc.imread(path + '/f' + str(frame_index).zfill(3) + '.png')
+    F0_com = misc.imread(path_com + 'output_' + str(frame_index).zfill(4) + '.png')
+    F0_raw = misc.imread(path + '/output_' + str(frame_index).zfill(4) + '.png')
 
     F0_com = np.expand_dims(F0_com, axis=0)
     F0_raw = np.expand_dims(F0_raw, axis=0)
@@ -208,7 +208,7 @@ def hific_I(args, frame_index, I_level, path, path_com, path_bin):
     elif args.metric == 'MS-SSIM':
         quality = MultiScaleSSIM(F0_com, F0_raw, max_val=255)
 
-    bits = os.path.getsize(path_bin + '/f' + str(frame_index).zfill(3) + '.tfci')
+    bits = os.path.getsize(path_bin + '/output_' + str(frame_index).zfill(4) + '.tfci')
     bits = bits * 8 / np.size(F0_com, 1) / np.size(F0_com, 2)
 
     print('Frame', frame_index, 'bpp =', bits, args.metric + ' =', quality)
@@ -218,13 +218,13 @@ def hific_I(args, frame_index, I_level, path, path_com, path_bin):
 def decode_I(args, frame_index, path_com, path_bin):
 
     if args.mode == 'PSNR':
-        os.system('bpgdec ' + path_bin + 'f' + str(frame_index).zfill(3) + '.bin '
-                  '-o ' + path_com + 'f' + str(frame_index).zfill(3) + '.png')
+        os.system('bpgdec ' + path_bin + 'output_' + str(frame_index).zfill(4) + '.bin '
+                  '-o ' + path_com + 'output_' + str(frame_index).zfill(4) + '.png')
 
     elif args.mode == 'MS-SSIM':
         os.system(args.python_path + ' ' + args.CA_model_path + '/decode.py --compressed_file_path '
-                  + path_bin + 'f' + str(frame_index).zfill(3) + '.bin'
-                  + ' --recon_path ' + path_com + 'f' + str(frame_index).zfill(3) + '.png')
+                  + path_bin + 'output_' + str(frame_index).zfill(4) + '.bin'
+                  + ' --recon_path ' + path_com + 'output_' + str(frame_index).zfill(4) + '.png')
 
     print('Decoded I-frame', frame_index)
 
@@ -236,7 +236,7 @@ def entropy_coding(frame_index, lat, path_bin, latent, sigma, mu):
     else:
         bias = 100
 
-    bin_name = 'f' + str(frame_index).zfill(3) + '_' + lat + '.bin'
+    bin_name = 'output_' + str(frame_index).zfill(4) + '_' + lat + '.bin'
     bitout = arithmeticcoding.BitOutputStream(open(path_bin + bin_name, "wb"))
     enc = arithmeticcoding.ArithmeticEncoder(32, bitout)
 
@@ -265,7 +265,7 @@ def entropy_decoding(frame_index, lat, path_bin, path_lat, sigma, mu):
     else:
         bias = 100
 
-    bin_name = 'f' + str(frame_index).zfill(3) + '_' + lat + '.bin'
+    bin_name = 'output_' + str(frame_index).zfill(4) + '_' + lat + '.bin'
     bitin = arithmeticcoding.BitInputStream(open(path_bin + bin_name, "rb"))
     dec = arithmeticcoding.ArithmeticDecoder(32, bitin)
 
@@ -284,7 +284,7 @@ def entropy_decoding(frame_index, lat, path_bin, path_lat, sigma, mu):
 
     bitin.close()
 
-    np.save(path_lat + '/f' + str(frame_index).zfill(3) + '_' + lat + '.npy', latent)
+    np.save(path_lat + '/output_' + str(frame_index).zfill(4) + '_' + lat + '.npy', latent)
     print('Decoded latent_' + lat + ' frame', frame_index)
 
     return latent

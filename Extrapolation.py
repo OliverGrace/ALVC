@@ -26,11 +26,11 @@ args = parser.parse_args()
 os.makedirs(args.path + '/extra_states', exist_ok=True)
 
 if args.dirc == 'fw':
-    frame_1 = imageio.imread(args.path + 'f' + str(args.idx - 2).zfill(3) + '.png').astype(np.float32) / 255.0
-    frame_2 = imageio.imread(args.path + 'f' + str(args.idx - 1).zfill(3) + '.png').astype(np.float32) / 255.0
+    frame_1 = imageio.imread(args.path + 'output_' + str(args.idx - 2).zfill(4) + '.png').astype(np.float32) / 255.0
+    frame_2 = imageio.imread(args.path + 'output_' + str(args.idx - 1).zfill(4) + '.png').astype(np.float32) / 255.0
 else:
-    frame_1 = imageio.imread(args.path + 'f' + str(args.idx + 2).zfill(3) + '.png').astype(np.float32) / 255.0
-    frame_2 = imageio.imread(args.path + 'f' + str(args.idx + 1).zfill(3) + '.png').astype(np.float32) / 255.0
+    frame_1 = imageio.imread(args.path + 'output_' + str(args.idx + 2).zfill(4) + '.png').astype(np.float32) / 255.0
+    frame_2 = imageio.imread(args.path + 'output_' + str(args.idx + 1).zfill(4) + '.png').astype(np.float32) / 255.0
 
 batch_size = 1
 Height = frame_1.shape[0]
@@ -88,9 +88,9 @@ frame_out, state_enc_1, state_enc_2, \
 state_dec_1, state_dec_2, state_fea_1, state_fea_2, pre_flow \
     = sess.run([frame_output, s_enc_1, s_enc_2, s_dec_1, s_dec_2, s_fea_1, s_fea_2, flow])
 
-# np.save(args.path + 'f' + str(args.idx).zfill(3) + '_extra.npy', frame_out)
+# np.save(args.path + 'output_' + str(args.idx).zfill(4) + '_extra.npy', frame_out)
 frame_out = np.uint8(np.round(np.clip(frame_out, 0, 1) * 255.0))
-imageio.imwrite(args.path + 'f' + str(args.idx).zfill(3) + '_extra.png', frame_out[0])
+imageio.imwrite(args.path + 'output_' + str(args.idx).zfill(4) + '_extra.png', frame_out[0])
 
 np.save(args.path + '/extra_states/state_enc_1.npy', state_enc_1)
 np.save(args.path + '/extra_states/state_enc_2.npy', state_enc_2)

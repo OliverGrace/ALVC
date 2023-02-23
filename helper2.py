@@ -42,7 +42,7 @@ def configure(args):
     os.makedirs(path_bin, exist_ok=True)
     os.makedirs(path_lat, exist_ok=True)
 
-    F1 = misc.imread(path + 'f001.png')
+    F1 = misc.imread(path + 'output_0001.png')
     Height = np.size(F1, 0)
     Width = np.size(F1, 1)
     batch_size = 1
@@ -63,26 +63,26 @@ def configure(args):
 
 def encode_I(args, frame_index, I_level, path, path_com, path_bin):
 
-    F1 = misc.imread(path + '/f001.png')
+    F1 = misc.imread(path + '/output_0001.png')
     Height = np.size(F1, 0)
     Width = np.size(F1, 1)
 
-    os.system('ffmpeg -i ' + path + 'f' + str(frame_index).zfill(3) + '.png '
-              '-pix_fmt yuv444p ' + path + 'f' + str(frame_index).zfill(3) + '.yuv -y -loglevel error')
+    os.system('ffmpeg -i ' + path + 'output_' + str(frame_index).zfill(4) + '.png '
+              '-pix_fmt yuv444p ' + path + 'output_' + str(frame_index).zfill(4) + '.yuv -y -loglevel error')
     os.system(
         './VVCSoftware_VTM/bin/EncoderAppStatic -c ./VVCSoftware_VTM/encoder_intra_vtm.cfg '
-        '-i ' + path + 'f' + str(frame_index).zfill(3) + '.yuv -b ' + path_bin + 'f' + str(frame_index).zfill(3) + '.bin '
-        '-o ' + path_com + 'f' + str(frame_index).zfill(3) +  '.yuv -f 1 -fr 2 -wdt ' + str(Width) + ' -hgt ' + str(Height) +
+        '-i ' + path + 'output_' + str(frame_index).zfill(4) + '.yuv -b ' + path_bin + 'output_' + str(frame_index).zfill(4) + '.bin '
+        '-o ' + path_com + 'output_' + str(frame_index).zfill(4) +  '.yuv -f 1 -fr 2 -wdt ' + str(Width) + ' -hgt ' + str(Height) +
         ' -q ' + str(I_level) + ' --InputBitDepth=8 --OutputBitDepth=8 --OutputBitDepthC=8 --InputChromaFormat=444 > /dev/null')
 
     os.system(
         'ffmpeg -f rawvideo -pix_fmt yuv444p -s ' + str(Width) + 'x' + str(Height) +
-        ' -i ' + path_com + 'f' + str(frame_index).zfill(3) + '.yuv '
-        + path_com + 'f' + str(frame_index).zfill(3) + '.png -y -loglevel error')
+        ' -i ' + path_com + 'output_' + str(frame_index).zfill(4) + '.yuv '
+        + path_com + 'output_' + str(frame_index).zfill(4) + '.png -y -loglevel error')
 
 
-    F0_com = misc.imread(path_com + 'f' + str(frame_index).zfill(3) + '.png')
-    F0_raw = misc.imread(path + 'f' + str(frame_index).zfill(3) + '.png')
+    F0_com = misc.imread(path_com + 'output_' + str(frame_index).zfill(4) + '.png')
+    F0_raw = misc.imread(path + 'output_' + str(frame_index).zfill(4) + '.png')
 
     F0_com = np.expand_dims(F0_com, axis=0)
     F0_raw = np.expand_dims(F0_raw, axis=0)
@@ -105,7 +105,7 @@ def entropy_coding(frame_index, lat, path_bin, latent, sigma, mu):
     else:
         bias = 100
 
-    bin_name = 'f' + str(frame_index).zfill(3) + '_' + lat + '.bin'
+    bin_name = 'output_' + str(frame_index).zfill(4) + '_' + lat + '.bin'
     bitout = arithmeticcoding.BitOutputStream(open(path_bin + bin_name, "wb"))
     enc = arithmeticcoding.ArithmeticEncoder(32, bitout)
 
@@ -134,7 +134,7 @@ def entropy_decoding(frame_index, lat, path_bin, path_lat, sigma, mu):
     else:
         bias = 100
 
-    bin_name = 'f' + str(frame_index).zfill(3) + '_' + lat + '.bin'
+    bin_name = 'output_' + str(frame_index).zfill(4) + '_' + lat + '.bin'
     bitin = arithmeticcoding.BitInputStream(open(path_bin + bin_name, "rb"))
     dec = arithmeticcoding.ArithmeticDecoder(32, bitin)
 
@@ -153,7 +153,7 @@ def entropy_decoding(frame_index, lat, path_bin, path_lat, sigma, mu):
 
     bitin.close()
 
-    np.save(path_lat + '/f' + str(frame_index).zfill(3) + '_' + lat + '.npy', latent)
+    np.save(path_lat + '/output_' + str(frame_index).zfill(4) + '_' + lat + '.npy', latent)
     print('Decoded latent_' + lat + ' frame', frame_index)
 
     return latent
